@@ -29,7 +29,16 @@ def download_indian_crops_gpu():
     # return dataset.location
     
     print("\n[NOTE] Once you add your key, this function will automatically download and format everything!")
-    return "Rice-Disease-1/data.yaml"
+    
+    yaml_path = "Rice-Disease-1/data.yaml"
+    if not os.path.exists(yaml_path):
+        print("\n[STOP] You haven't added your Roboflow API key yet!")
+        print("Please open main.py, go to line 23, uncomment the code, and paste your API Key.")
+        print("You can get a free key by creating an account at https://universe.roboflow.com/")
+        import sys
+        sys.exit(1)
+        
+    return yaml_path
 
 def setup_dataset():
     """
