@@ -1,0 +1,6 @@
+datasets/
+runs/
+__pycache__/
+*.pt
+!disease_model.pt
+.env
