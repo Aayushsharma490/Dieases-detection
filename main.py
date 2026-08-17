@@ -9,7 +9,31 @@ from ultralytics import YOLO
 # (a major Indian crop) using Roboflow.
 DATA_YAML_PATH = "Rice-Disease-1/data.yaml"
 
+def download_indian_crops_gpu():
+    """
+    Downloads massive unified datasets (Rice, Wheat, Corn, etc.) using Roboflow.
+    This is best for when you run the script on your powerful GPU server!
+    """
+    print("\n--- Downloading Indian Crop Diseases (Rice, Wheat, Corn, etc.) ---")
+    print("To get massive, properly merged YOLOv8 datasets for Indian crops:")
+    print("1. Go to https://universe.roboflow.com/")
+    print("2. Search for 'Indian Crop Diseases' or 'Rice Leaf Disease'")
+    print("3. Click 'Download Dataset' -> 'YOLOv8 format' -> 'Show Download Code'")
+    print("4. Paste your Roboflow API key and workspace code below in main.py:")
+    
+    # --- UNCOMMENT AND ADD YOUR KEY HERE ON THE GPU SYSTEM ---
+    # from roboflow import Roboflow
+    # rf = Roboflow(api_key="YOUR_API_KEY_HERE")
+    # project = rf.workspace("workspace-name").project("project-name")
+    # dataset = project.version(1).download("yolov8")
+    # return dataset.location
+    
+    print("\n[NOTE] Once you add your key, this function will automatically download and format everything!")
+    return "Rice-Disease-1/data.yaml"
+
 def setup_dataset():
+    """
+    Sets up the basic Plant Disease dataset we used on the laptop.
     """
     Returns the path to the downloaded Plant Disease dataset configuration.
     """
@@ -80,10 +104,10 @@ def run_camera_inference(model_path):
 # ==========================================
 if __name__ == "__main__":
     print("Select Mode:")
-    print("1. Train Model & Export for Raspberry Pi")
+    print("1. Train Model & Export for Raspberry Pi (Basic Laptop Dataset)")
     print("2. Run Camera Inference (Laptop Demo)")
-    
-    choice = input("Enter choice (1 or 2): ").strip()
+    print("3. Train Massive Unified Model (Rice, Wheat, Corn) on GPU Server")
+    choice = input("Enter choice (1, 2, or 3): ")
     
     if choice == '1':
         data_yaml = setup_dataset()
@@ -91,5 +115,12 @@ if __name__ == "__main__":
     elif choice == '2':
         # Default save path for YOLOv8 weights (bundled in repo)
         run_camera_inference("disease_model.pt")
+    elif choice == '3':
+        data_yaml = download_indian_crops_gpu()
+        # Train for much longer on the GPU
+        model = YOLO("yolov8n.pt")
+        print("\n--- Training on GPU server for 100 Epochs! ---")
+        model.train(data=data_yaml, epochs=100, imgsz=640, device=0, name="indian_crop_model")
+        print("Done! You can download 'runs/detect/indian_crop_model/weights/best.pt' and use it on the Pi.")
     else:
         print("Invalid choice.")
