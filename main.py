@@ -119,7 +119,7 @@ if __name__ == "__main__":
         # Train for much longer on the GPU
         model = YOLO("yolov8n.pt")
         print("\n--- Training on GPU server for 100 Epochs! ---")
-        model.train(data=data_yaml, epochs=100, imgsz=640, device=0, name="indian_crop_model")
+        model.train(data=data_yaml, epochs=100, imgsz=640, name="indian_crop_model")
         print("Done! You can download 'runs/detect/indian_crop_model/weights/best.pt' and use it on the Pi.")
     else:
         print("Invalid choice.")
