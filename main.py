@@ -11,18 +11,19 @@ from ultralytics import YOLO
 # CONFIGURATION
 # ==========================================
 # Links to standard YOLOv8 formatted zip datasets
-BASE_DATASET_URL = "https://huggingface.co/datasets/rick003/plant-disease-clean-v1/resolve/main/dataset.zip"
-# Placeholder for a Rice dataset in YOLOv8 format (you can replace with any direct ZIP link)
-RICE_DATASET_URL = "https://huggingface.co/datasets/rick003/plant-disease-clean-v1/resolve/main/dataset.zip" # Using same as fallback
+BASE_DATASET_URL = "https://huggingface.co/datasets/rick003/plant-disease-clean-v1/resolve/main/plant_disease_clean_v1.zip"
+RICE_DATASET_URL = "https://huggingface.co/datasets/amdmqd/rice_leaf_disease_dataset/resolve/main/rice_leaf_disease_dataset.zip"
 
 def download_and_extract(url, extract_to):
     if os.path.exists(extract_to):
         print(f"[INFO] Dataset already exists at {extract_to}")
         return
     print(f"\nDownloading dataset from {url}...")
-    zip_path, _ = urllib.request.urlretrieve(url, "temp_dataset.zip")
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urllib.request.urlopen(req) as response, open("temp_dataset.zip", 'wb') as out_file:
+        shutil.copyfileobj(response, out_file)
     print(f"Extracting to {extract_to}...")
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+    with zipfile.ZipFile("temp_dataset.zip", 'r') as zip_ref:
         zip_ref.extractall(extract_to)
     os.remove("temp_dataset.zip")
 
@@ -62,8 +63,7 @@ def download_indian_crops_gpu():
     ds2_dir = "datasets/raw_rice"
     
     download_and_extract(BASE_DATASET_URL, ds1_dir)
-    # Ideally download a real rice dataset zip here
-    # download_and_extract(RICE_DATASET_URL, ds2_dir) 
+    download_and_extract(RICE_DATASET_URL, ds2_dir) 
     
     print("Merging datasets...")
     def process_dataset(raw_dir, unified_dir, class_offset):
@@ -84,7 +84,7 @@ def download_indian_crops_gpu():
     # Process Base Dataset (offset 0)
     process_dataset(ds1_dir, unified_dir, 0)
     # Process Rice Dataset (offset 17 because base has 17 classes)
-    # process_dataset(ds2_dir, unified_dir, 17)
+    process_dataset(ds2_dir, unified_dir, 17)
     
     # Generate unified data.yaml
     yaml_content = {
