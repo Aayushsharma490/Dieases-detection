@@ -34,7 +34,6 @@ def download_indian_crops_gpu():
 def setup_dataset():
     """
     Sets up the basic Plant Disease dataset we used on the laptop.
-    """
     Returns the path to the downloaded Plant Disease dataset configuration.
     """
     yaml_path = os.path.join("datasets", "crop_disease", "dataset", "data.yaml")
